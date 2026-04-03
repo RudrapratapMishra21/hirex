@@ -126,25 +126,39 @@ box-shadow:0 0 15px #00f7ff;
 </div>
 
 <script>
-document.getElementById("loginForm").addEventListener("submit", function(e){
-e.preventDefault();
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+    e.preventDefault();
 
-fetch("http://127.0.0.1:5000/api/login",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-email:document.getElementById("email").value,
-password:document.getElementById("password").value
-})
-})
-.then(res=>res.json())
-.then(data=>{
-alert("Login Successful");
-window.location.href="/recruiter/post-job.html";
-})
-.catch(()=>{
-alert("Backend not running or login failed");
-});
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/api/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await res.json();
+
+        // ✅ FIX: only allow redirect if login is valid
+        if (res.ok) {
+            alert("Login Successful");
+
+            // store email (or token later)
+            localStorage.setItem("email", email);
+
+            window.location.href = "/recruiter/post-job.html";
+        } else {
+            alert(data.message || "Invalid login");
+        }
+
+    } catch (error) {
+        alert("Backend not running");
+    }
 });
 </script>
 

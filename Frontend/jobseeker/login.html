@@ -126,31 +126,39 @@ box-shadow:0 0 15px #00f7ff;
 </div>
 
 <script>
-document.getElementById("loginForm").addEventListener("submit", function(e){
-e.preventDefault();
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+    e.preventDefault();
 
-let email = document.getElementById("email").value;
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
 
-fetch("http://127.0.0.1:5000/api/login",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-email: email,
-password: document.getElementById("password").value
-})
-})
-.then(res=>res.json())
-.then(data=>{
-alert("Login Successful");
+    try {
+        const res = await fetch("http://127.0.0.1:5000/api/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
 
-// ✅ FIXED (STORE EMAIL)
-localStorage.setItem("email", email);
+        const data = await res.json();
 
-window.location.href="/jobseeker/view_jobs.html";
-})
-.catch(()=>{
-alert("Backend not running or login failed");
-});
+        // ✅ ONLY redirect if login is valid
+        if (res.ok) {
+            alert("Login Successful");
+
+            // store email (or later token)
+            localStorage.setItem("email", email);
+
+            window.location.href = "/jobseeker/view_jobs.html";
+        } else {
+            alert(data.message || "Invalid login");
+        }
+
+    } catch (error) {
+        alert("Backend not running");
+    }
 });
 </script>
 
