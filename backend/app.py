@@ -51,6 +51,17 @@ def init_db():
     )
     """)
 
+    # ✅ ADD THIS
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS resumes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT,
+        file_name TEXT,
+        file_path TEXT,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -162,26 +173,6 @@ def apply_job():
 
     return jsonify({"message": "Application submitted"})
 
-# ---------------- VIEW APPLICATIONS ----------------
-@app.route("/api/applications", methods=["GET"])
-def get_applications():
-    conn = sqlite3.connect("hirex.db")
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT job_id, email FROM applications")
-    rows = cursor.fetchall()
-
-    conn.close()
-
-    data = []
-    for r in rows:
-        data.append({
-            "job_id": r[0],
-            "email": r[1]
-        })
-
-    return jsonify(data)
-
 # ---------------- UPLOAD RESUME ----------------
 @app.route("/api/upload", methods=["POST"])
 def upload_resume():
@@ -202,10 +193,25 @@ def upload_resume():
 
     text = extract_text(path)
 
+    # ✅ keep for AI
     resumes.append({
         "name": filename,
         "text": text
     })
+
+    # ✅ NEW: save to DB
+    conn = sqlite3.connect("hirex.db")
+    cursor = conn.cursor()
+
+    email = "test_user@gmail.com"  # later replace with real user
+
+    cursor.execute(
+        "INSERT INTO resumes (email, file_name, file_path) VALUES (?, ?, ?)",
+        (email, filename, path)
+    )
+
+    conn.commit()
+    conn.close()
 
     return jsonify({"message": "Resume uploaded successfully"})
 

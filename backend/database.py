@@ -36,6 +36,17 @@ CREATE TABLE IF NOT EXISTS applications (
 )
 """)
 
+# ✅ RESUMES TABLE (NEW)
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS resumes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT,
+    file_name TEXT,
+    file_path TEXT,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
 conn.commit()
 conn.close()
 
