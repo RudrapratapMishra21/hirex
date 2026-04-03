@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HireX AI Portal</title>
+
+<style>
+body{
+    margin:0;
+    background:#020617;
+    color:#00f7ff;
+    font-family:monospace;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.core{
+    width:420px;
+    padding:40px;
+    border-radius:20px;
+    background:rgba(0,0,0,0.7);
+    border:2px solid #00f7ff;
+    box-shadow:0 0 25px #00f7ff;
+    text-align:center;
+}
+input, select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    background:transparent;
+    border:1px solid #00f7ff;
+    color:#00f7ff;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#00f7ff;
+    border:none;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="core">
+<h2>Register</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<select id="role">
+<option value="">Select Role</option>
+<option value="jobseeker">Job Seeker</option>
+<option value="recruiter">Recruiter</option>
+</select>
+
+<button onclick="register()">Register</button>
+
+</div>
+
+<script>
+function register() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
+
+    if(email === "" || password === "" || role === ""){
+        alert("Fill all fields");
+        return;
+    }
+
+    fetch("http://127.0.0.1:5000/api/register", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({email,password,role})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        alert(data.message);
+
+        if(role==="jobseeker"){
+            window.location.href="/jobseeker/login.html";
+        } else {
+            window.location.href="/recruiter/login.html";
+        }
+    })
+    .catch(()=>alert("Backend not running"));
+}
+</script>
+
+</body>
+</html>

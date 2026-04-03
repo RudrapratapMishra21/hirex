@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Recruiter Login</title>
+
+<style>
+body{
+margin:0;
+background:#020617;
+color:#00f7ff;
+font-family:monospace;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+
+.core{
+position:relative;
+width:380px;
+padding:40px;
+border-radius:50%;
+border:2px solid #00f7ff;
+display:flex;
+justify-content:center;
+align-items:center;
+box-shadow:0 0 50px #00f7ff;
+background:rgba(0,0,0,0.7);
+}
+
+.ring{
+position:absolute;
+border-radius:50%;
+border:1px solid #00f7ff;
+}
+
+.r1{
+width:420px;
+height:420px;
+animation:spin1 10s linear infinite;
+}
+
+.r2{
+width:480px;
+height:480px;
+animation:spin2 14s linear infinite;
+}
+
+@keyframes spin1{
+from{transform:rotate(0deg)}
+to{transform:rotate(360deg)}
+}
+
+@keyframes spin2{
+from{transform:rotate(360deg)}
+to{transform:rotate(0deg)}
+}
+
+.pulse{
+position:absolute;
+border:1px solid #00f7ff;
+border-radius:50%;
+width:240px;
+height:240px;
+animation:pulse 2.5s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(0.8);opacity:1;}
+100%{transform:scale(1.5);opacity:0;}
+}
+
+.login{
+text-align:center;
+width:260px;
+z-index:10;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:6px 0;
+background:black;
+border:1px solid #00f7ff;
+color:#00f7ff;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+background:#00f7ff;
+border:none;
+color:black;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+box-shadow:0 0 15px #00f7ff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="ring r1"></div>
+<div class="ring r2"></div>
+
+<div class="core">
+<div class="pulse"></div>
+
+<div class="login">
+
+<h2>Recruiter Login</h2>
+
+<form id="loginForm">
+<input type="email" id="email" placeholder="Email" required>
+<input type="password" id="password" placeholder="Password" required>
+<button type="submit">Login</button>
+</form>
+
+</div>
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e){
+e.preventDefault();
+
+fetch("http://127.0.0.1:5000/api/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+email:document.getElementById("email").value,
+password:document.getElementById("password").value
+})
+})
+.then(res=>res.json())
+.then(data=>{
+alert("Login Successful");
+window.location.href="/recruiter/post-job.html";
+})
+.catch(()=>{
+alert("Backend not running or login failed");
+});
+});
+</script>
+
+</body>
+</html>
